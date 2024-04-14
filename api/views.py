@@ -1,17 +1,23 @@
-from django.http import HttpResponse, HttpResponseNotAllowed, \
-    HttpResponseBadRequest
+from django.http import HttpResponse, HttpResponseNotAllowed, HttpResponseBadRequest
 from django.views.decorators.csrf import csrf_exempt
+from PCF8574 import PCF8574GPIO
+from LCD1602 import LCD
 from django_ratelimit.decorators import ratelimit
 
-from LCD1602 import LCD
-from PCF8574 import PCF8574GPIO
 from .forms import MessageForm
 
 HTTP_NO_CONTENT = 204
 
 pcf8574_address = 0x27
-mcp = PCF8574GPIO(pcf8574_address)
-
+pcf8574_a_address = 0x3F
+try:
+    mcp = PCF8574GPIO(pcf8574_address)
+except OSError:
+    try:
+        mcp = PCF8574GPIO(pcf8574_a_address)
+    except OSError:
+        print("I2C Address Error")
+        exit(1)
 lcd = LCD(2, pin_rs=0, pin_e=2, pins_db=[4, 5, 6, 7], GPIO=mcp)
 mcp.output(3, 1)  # Turn on LCD backlight
 
@@ -37,3 +43,4 @@ def message(request):
         return HttpResponse(status=HTTP_NO_CONTENT)
     else:
         return HttpResponseNotAllowed(["POST", "DELETE"])
+
