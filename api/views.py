@@ -38,6 +38,8 @@ def message(request):
         lcd.clear()
         lcd.message(row_one + "\n" + row_two)
         return HttpResponse(status=HTTP_NO_CONTENT)
+    elif request.method == "GET":
+        return HttpResponse(lcd.text, content_type="text/plain")
     elif request.method == "DELETE":
         lcd.clear()
         return HttpResponse(status=HTTP_NO_CONTENT)

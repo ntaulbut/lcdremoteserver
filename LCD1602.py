@@ -48,6 +48,7 @@ class LCD(object):
     def __init__(self, lines, pin_rs=25, pin_e=24, pins_db=None, GPIO=None):
         # Emulate the old behavior of using RPi.GPIO if we haven't been given
         # an explicit GPIO interface to use
+        self.text = ""
         if pins_db is None:
             pins_db = [23, 17, 21, 22]
         if not GPIO:
@@ -189,6 +190,7 @@ class LCD(object):
 
     def message(self, text):
         """ Send string to LCD. Newline wraps to next line"""
+        self.text = text
         for char in text:
             if char == '\n':
                 self.write_nibble(0xC0)  # next line
