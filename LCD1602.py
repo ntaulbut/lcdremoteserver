@@ -92,6 +92,7 @@ class LCD(object):
         delay_ms(3000)
 
     def clear(self):
+        self.text = ""
         self.write_nibble(self.LCD_CLEAR_DISPLAY)
         delay_ms(
             3000)
